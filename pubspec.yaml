@@ -11,6 +11,40 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # Core Dependencies
+  provider: ^6.1.2
+  
+  # Firebase
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  firebase_firestore: ^4.13.6
+  cloud_firestore: ^4.13.6
+  
+  # UI & Navigation
+  cupertino_icons: ^1.0.6
+  
+  # HTTP & Networking  
+  http: ^1.1.2
+  
+  # Location & Maps
+  geolocator: ^10.1.0
+  geocoding: ^2.1.1
+  google_maps_flutter: ^2.5.0
+  
+  # Authentication
+  google_sign_in: ^6.1.6
+  
+  # Utilities
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  url_launcher: ^6.2.1
+  
+  # Payments
+  crypto: ^3.0.3
+  
+  # Permissions
+  permission_handler: ^11.1.0
 
   # UI & Icons
   cupertino_icons: ^1.0.8
