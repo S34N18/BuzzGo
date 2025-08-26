@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
+// Required imports
+import 'dart:async';
+import 'dart:math';
+
 
 class Helpers {
   // Date formatting
@@ -397,6 +401,3 @@ class Helpers {
   }
 }
 
-// Required imports
-import 'dart:async';
-import 'dart:math';

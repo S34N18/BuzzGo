@@ -176,7 +176,7 @@ class FirestoreService {
           .collection(eventsCollection)
           .where('isActive', isEqualTo: true)
           .where('title', isGreaterThanOrEqualTo: query)
-          .where('title', isLessThan: query + 'z')
+          .where('title', isLessThan: '${query}z')
           .get();
       return snapshot.docs
           .map((doc) => EventModel.fromJson(doc.data() as Map<String, dynamic>))

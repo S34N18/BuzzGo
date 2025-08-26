@@ -85,8 +85,8 @@ class CustomButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor ?? colorScheme.primary,
             foregroundColor: textColor ?? colorScheme.onPrimary,
-            disabledBackgroundColor: colorScheme.outline.withOpacity(0.3),
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+            disabledBackgroundColor: Color.fromRGBO((colorScheme.outline.r * 255.0).round() & 0xff, (colorScheme.outline.g * 255.0).round() & 0xff, (colorScheme.outline.b * 255.0).round() & 0xff, 0.3),
+            disabledForegroundColor: Color.fromRGBO((colorScheme.onSurface.r * 255.0).round() & 0xff, (colorScheme.onSurface.g * 255.0).round() & 0xff, (colorScheme.onSurface.b * 255.0).round() & 0xff, 0.38),
             padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -103,8 +103,8 @@ class CustomButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: backgroundColor ?? colorScheme.secondary,
             foregroundColor: textColor ?? colorScheme.onSecondary,
-            disabledBackgroundColor: colorScheme.outline.withOpacity(0.3),
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+            disabledBackgroundColor: Color.fromRGBO((colorScheme.outline.r * 255.0).round() & 0xff, (colorScheme.outline.g * 255.0).round() & 0xff, (colorScheme.outline.b * 255.0).round() & 0xff, 0.3),
+            disabledForegroundColor: Color.fromRGBO((colorScheme.onSurface.r * 255.0).round() & 0xff, (colorScheme.onSurface.g * 255.0).round() & 0xff, (colorScheme.onSurface.b * 255.0).round() & 0xff, 0.38),
             padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -120,7 +120,7 @@ class CustomButton extends StatelessWidget {
           onPressed: isButtonEnabled ? onPressed : null,
           style: OutlinedButton.styleFrom(
             foregroundColor: textColor ?? colorScheme.primary,
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+            disabledForegroundColor: Color.fromRGBO(colorScheme.onSurface.red, colorScheme.onSurface.green, colorScheme.onSurface.blue, 0.38),
             padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -128,7 +128,7 @@ class CustomButton extends StatelessWidget {
             side: BorderSide(
               color: isButtonEnabled
                   ? (backgroundColor ?? colorScheme.primary)
-                  : colorScheme.outline.withOpacity(0.3),
+                  : Color.fromRGBO(colorScheme.outline.red, colorScheme.outline.green, colorScheme.outline.blue, 0.3),
               width: 1.5,
             ),
           ),
@@ -139,12 +139,20 @@ class CustomButton extends StatelessWidget {
       case ButtonType.text:
         button = TextButton(
           onPressed: isButtonEnabled ? onPressed : null,
-          style: TextButton.styleFrom(
-            foregroundColor: textColor ?? colorScheme.primary,
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
-            padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+          style: ButtonStyle(
+            foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return Color.fromRGBO(colorScheme.onSurface.red, colorScheme.onSurface.green, colorScheme.onSurface.blue, 0.38);
+              }
+              return textColor ?? colorScheme.primary;
+            }),
+            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+              padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+              ),
             ),
           ),
           child: buttonChild,

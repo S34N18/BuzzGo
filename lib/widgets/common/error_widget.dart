@@ -89,7 +89,7 @@ class CustomErrorWidget extends StatelessWidget {
       case ErrorType.permission:
         return Icons.lock;
       case ErrorType.server:
-        return Icons.server_error;
+        return Icons.error;
       case ErrorType.general:
       default:
         return Icons.error_outline;

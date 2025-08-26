@@ -113,7 +113,7 @@ class EventCard extends StatelessWidget {
                       right: 12,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
@@ -226,7 +226,7 @@ class EventCard extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: _getAvailabilityColor().withOpacity(0.1),
+                          color: _getAvailabilityColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(

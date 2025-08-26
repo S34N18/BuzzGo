@@ -1,4 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
+
+// Logger instance for the app
+final Logger _logger = Logger();
 
 class AppConfig {
   // App Information
@@ -268,16 +272,16 @@ class AppConfig {
 
   static void printConfiguration() {
     if (enableLogging) {
-      print('=== App Configuration ===');
-      print('App Name: $appName');
-      print('Version: $appVersion');
-      print('Environment: $environment');
-      print('Base URL: $baseUrl');
-      print('Firebase Project: $firebaseProjectId');
-      print('Debug Mode: $isDebug');
-      print('Analytics Enabled: $enableAnalytics');
-      print('Logging Enabled: $enableLogging');
-      print('========================');
+      _logger.i('=== App Configuration ===');
+      _logger.i('App Name: $appName');
+      _logger.i('Version: $appVersion');
+      _logger.i('Environment: $environment');
+      _logger.i('Base URL: $baseUrl');
+      _logger.i('Firebase Project: $firebaseProjectId');
+      _logger.i('Debug Mode: $isDebug');
+      _logger.i('Analytics Enabled: $enableAnalytics');
+      _logger.i('Logging Enabled: $enableLogging');
+      _logger.i('========================');
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 enum LoadingType { circular, linear, dots, pulse }
 
@@ -249,4 +250,3 @@ class LoadingOverlay extends StatelessWidget {
 }
 
 // Import for sin function
-import 'dart:math';

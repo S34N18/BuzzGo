@@ -1,12 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import '../models/user_model.dart';
-import 'firestore_service.dart';
+// REMOVE this line: import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirestoreService _firestoreService = FirestoreService();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -14,111 +10,61 @@ class AuthService {
   // Auth state changes stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // Sign up with email and password
+  Future<UserCredential?> signUpWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result;
+    } on FirebaseAuthException catch (e) {
+      print('Sign up error: ${e.message}');
+      throw e;
+    } catch (e) {
+      print('Unexpected error during sign up: $e');
+      return null;
+    }
+  }
+
   // Sign in with email and password
-  Future<UserCredential?> signInWithEmailAndPassword(
-      String email, String password) async {
+  Future<UserCredential?> signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       return result;
+    } on FirebaseAuthException catch (e) {
+      print('Sign in error: ${e.message}');
+      throw e;
     } catch (e) {
-      throw Exception('Sign in failed: ${e.toString()}');
+      print('Unexpected error during sign in: $e');
+      return null;
     }
   }
 
-  // Register with email and password
-  Future<UserCredential?> registerWithEmailAndPassword(
-      String email, String password, String name) async {
+  // Send password reset email
+  Future<void> sendPasswordResetEmail(String email) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Create user document in Firestore
-      if (result.user != null) {
-        UserModel userModel = UserModel(
-          id: result.user!.uid,
-          email: email,
-          name: name,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-        await _firestoreService.createUser(userModel);
-      }
-
-      return result;
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      print('Password reset error: ${e.message}');
+      throw e;
     } catch (e) {
-      throw Exception('Registration failed: ${e.toString()}');
-    }
-  }
-
-  // Sign in with Google
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      UserCredential result = await _auth.signInWithCredential(credential);
-
-      // Create user document if new user
-      if (result.additionalUserInfo?.isNewUser == true && result.user != null) {
-        UserModel userModel = UserModel(
-          id: result.user!.uid,
-          email: result.user!.email ?? '',
-          name: result.user!.displayName ?? '',
-          profileImage: result.user!.photoURL,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-        await _firestoreService.createUser(userModel);
-      }
-
-      return result;
-    } catch (e) {
-      throw Exception('Google sign in failed: ${e.toString()}');
+      print('Unexpected error during password reset: $e');
+      rethrow;
     }
   }
 
   // Sign out
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
       await _auth.signOut();
+      // REMOVE this line: await GoogleSignIn().signOut();
     } catch (e) {
-      throw Exception('Sign out failed: ${e.toString()}');
-    }
-  }
-
-  // Reset password
-  Future<void> resetPassword(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      throw Exception('Password reset failed: ${e.toString()}');
-    }
-  }
-
-  // Update user profile
-  Future<void> updateUserProfile({String? displayName, String? photoURL}) async {
-    try {
-      User? user = _auth.currentUser;
-      if (user != null) {
-        await user.updateDisplayName(displayName);
-        await user.updatePhotoURL(photoURL);
-      }
-    } catch (e) {
-      throw Exception('Profile update failed: ${e.toString()}');
+      print('Sign out error: $e');
+      rethrow;
     }
   }
 
@@ -127,11 +73,50 @@ class AuthService {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        await _firestoreService.deleteUser(user.uid);
         await user.delete();
       }
+    } on FirebaseAuthException catch (e) {
+      print('Delete account error: ${e.message}');
+      throw e;
     } catch (e) {
-      throw Exception('Account deletion failed: ${e.toString()}');
+      print('Unexpected error during account deletion: $e');
+      rethrow;
     }
+  }
+
+  // Update user profile
+  Future<void> updateProfile({String? displayName, String? photoURL}) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        await user.updateDisplayName(displayName);
+        await user.updatePhotoURL(photoURL);
+        await user.reload();
+      }
+    } catch (e) {
+      print('Profile update error: $e');
+      rethrow;
+    }
+  }
+
+  // Send email verification
+  Future<void> sendEmailVerification() async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+    } catch (e) {
+      print('Email verification error: $e');
+      rethrow;
+    }
+  }
+
+  // Check if email is verified
+  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
+
+  // Reload current user
+  Future<void> reloadUser() async {
+    await _auth.currentUser?.reload();
   }
 }
