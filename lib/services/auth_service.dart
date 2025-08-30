@@ -31,7 +31,7 @@ class AuthService {
       return result;
     } on FirebaseAuthException catch (e) {
       print('Sign up error: ${e.message}');
-      throw e;
+      rethrow;
     } catch (e) {
       print('Unexpected error during sign up: $e');
       return null;
@@ -48,7 +48,7 @@ class AuthService {
       return result;
     } on FirebaseAuthException catch (e) {
       print('Sign in error: ${e.message}');
-      throw e;
+      rethrow;
     } catch (e) {
       print('Unexpected error during sign in: $e');
       return null;
@@ -71,7 +71,7 @@ class AuthService {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       print('Password reset error: ${e.message}');
-      throw e;
+      rethrow;
     } catch (e) {
       print('Unexpected error during password reset: $e');
       rethrow;
@@ -97,7 +97,7 @@ class AuthService {
       }
     } on FirebaseAuthException catch (e) {
       print('Delete account error: ${e.message}');
-      throw e;
+      rethrow;
     } catch (e) {
       print('Unexpected error during account deletion: $e');
       rethrow;

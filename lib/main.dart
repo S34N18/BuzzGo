@@ -7,7 +7,6 @@ import 'providers/event_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/theme_provider.dart';
 import 'utils/app_routes.dart';
-import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,8 +32,8 @@ class BuzzGoApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'BuzzGo - Local Event Finder',
-            theme: themeProvider.currentTheme,
-            home: const SplashScreen(),
+            theme: themeProvider.currentTheme ?? ThemeData.light(),
+            initialRoute: '/',
             routes: AppRoutes.routes,
             debugShowCheckedModeBanner: false,
           );

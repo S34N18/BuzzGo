@@ -51,101 +51,6 @@ class AppRoutes {
     };
   }
 
-  // Route generator for dynamic routes
-  static Route<dynamic>? generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case splash:
-        return MaterialPageRoute(
-          builder: (context) => const SplashScreen(),
-          settings: settings,
-        );
-
-      case home:
-        return MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-          settings: settings,
-        );
-
-      case login:
-        return MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-          settings: settings,
-        );
-
-      case register:
-        return MaterialPageRoute(
-          builder: (context) => const RegisterScreen(),
-          settings: settings,
-        );
-
-      case profile:
-        return MaterialPageRoute(
-          builder: (context) => const ProfileScreen(),
-          settings: settings,
-        );
-
-      case eventList:
-        return MaterialPageRoute(
-          builder: (context) => const EventListScreen(),
-          settings: settings,
-        );
-
-      case eventDetail:
-        return MaterialPageRoute(
-          builder: (context) => const EventDetailScreen(),
-          settings: settings,
-        );
-
-      case createEvent:
-        return MaterialPageRoute(
-          builder: (context) => const CreateEventScreen(),
-          settings: settings,
-        );
-
-      case myEvents:
-        return MaterialPageRoute(
-          builder: (context) => const MyEventsScreen(),
-          settings: settings,
-        );
-
-      case adminDashboard:
-        return MaterialPageRoute(
-          builder: (context) => const AdminDashboardScreen(),
-          settings: settings,
-        );
-
-      case manageEvents:
-        return MaterialPageRoute(
-          builder: (context) => const ManageEventsScreen(),
-          settings: settings,
-        );
-
-      case analytics:
-        return MaterialPageRoute(
-          builder: (context) => const AnalyticsScreen(),
-          settings: settings,
-        );
-
-      case payment:
-        return MaterialPageRoute(
-          builder: (context) => const PaymentScreen(),
-          settings: settings,
-        );
-
-      case paymentHistory:
-        return MaterialPageRoute(
-          builder: (context) => const PaymentHistoryScreen(),
-          settings: settings,
-        );
-
-      default:
-        return MaterialPageRoute(
-          builder: (context) => const NotFoundScreen(),
-          settings: settings,
-        );
-    }
-  }
-
   // Navigation helpers
   static Future<T?> pushNamed<T extends Object?>(
     BuildContext context,
@@ -168,105 +73,11 @@ class AppRoutes {
     );
   }
 
-  static Future<T?> pushNamedAndRemoveUntil<T extends Object?>(
-    BuildContext context,
-    String routeName,
-    RoutePredicate predicate, {
-    Object? arguments,
-  }) {
-    return Navigator.of(context).pushNamedAndRemoveUntil<T>(
-      routeName,
-      predicate,
-      arguments: arguments,
-    );
-  }
-
   static void pop<T extends Object?>(BuildContext context, [T? result]) {
     Navigator.of(context).pop<T>(result);
   }
 
-  static void popUntil(BuildContext context, RoutePredicate predicate) {
-    Navigator.of(context).popUntil(predicate);
-  }
-
-  // Custom transitions
-  static Route<T> slideTransition<T>(
-    Widget page,
-    RouteSettings settings, {
-    Offset begin = const Offset(1.0, 0.0),
-    Offset end = Offset.zero,
-    Curve curve = Curves.easeInOut,
-  }) {
-    return PageRouteBuilder<T>(
-      settings: settings,
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: begin,
-            end: end,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: curve,
-          )),
-          child: child,
-        );
-      },
-    );
-  }
-
-  static Route<T> fadeTransition<T>(
-    Widget page,
-    RouteSettings settings, {
-    Curve curve = Curves.easeInOut,
-  }) {
-    return PageRouteBuilder<T>(
-      settings: settings,
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: curve,
-          ),
-          child: child,
-        );
-      },
-    );
-  }
-
-  static Route<T> scaleTransition<T>(
-    Widget page,
-    RouteSettings settings, {
-    double begin = 0.0,
-    double end = 1.0,
-    Curve curve = Curves.easeInOut,
-  }) {
-    return PageRouteBuilder<T>(
-      settings: settings,
-      pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return ScaleTransition(
-          scale: Tween<double>(
-            begin: begin,
-            end: end,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: curve,
-          )),
-          child: child,
-        );
-      },
-    );
-  }
-
   // Route guards
-  static bool canNavigateToAdminRoutes(BuildContext context) {
-    // Add logic to check if user is admin
-    // This would typically check the user's role from a provider
-    return true; // Placeholder
-  }
-
   static bool isAuthRequired(String routeName) {
     const authRequiredRoutes = [
       profile,
@@ -289,31 +100,6 @@ class AppRoutes {
     ];
     return adminRequiredRoutes.contains(routeName);
   }
-
-  // Route middleware
-  static Route<dynamic>? authGuard(RouteSettings settings) {
-    if (isAuthRequired(settings.name ?? '')) {
-      // Check if user is authenticated
-      // If not, redirect to login
-      return MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-        settings: settings,
-      );
-    }
-    return null;
-  }
-
-  static Route<dynamic>? adminGuard(RouteSettings settings) {
-    if (isAdminRequired(settings.name ?? '')) {
-      // Check if user is admin
-      // If not, redirect to home or show error
-      return MaterialPageRoute(
-        builder: (context) => const UnauthorizedScreen(),
-        settings: settings,
-      );
-    }
-    return null;
-  }
 }
 
 // Error screens
@@ -330,78 +116,13 @@ class NotFoundScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 80,
-              color: Colors.grey,
-            ),
+            Icon(Icons.error_outline, size: 80, color: Colors.grey),
             SizedBox(height: 16),
-            Text(
-              '404',
-              style: TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
+            Text('404', style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.grey)),
             SizedBox(height: 8),
-            Text(
-              'Page Not Found',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.grey,
-              ),
-            ),
+            Text('Page Not Found', style: TextStyle(fontSize: 24, color: Colors.grey)),
             SizedBox(height: 16),
-            Text(
-              'The page you are looking for does not exist.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class UnauthorizedScreen extends StatelessWidget {
-  const UnauthorizedScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Unauthorized'),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.lock,
-              size: 80,
-              color: Colors.red,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Access Denied',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'You do not have permission to access this page.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-              ),
-            ),
+            Text('The page you are looking for does not exist.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
           ],
         ),
       ),
