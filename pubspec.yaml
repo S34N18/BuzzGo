@@ -10,6 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+      # JavaScript interop for Firebase web
+  js: ^0.6.7
+
   # State Management
   provider: ^6.1.5
   
