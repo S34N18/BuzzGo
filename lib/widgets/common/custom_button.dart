@@ -137,22 +137,12 @@ class CustomButton extends StatelessWidget {
         break;
 
       case ButtonType.text:
-        button = TextButton(
-          onPressed: isButtonEnabled ? onPressed : null,
-          style: ButtonStyle(
-            foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
-              if (states.contains(WidgetState.disabled)) {
-                return Color.fromRGBO(colorScheme.onSurface.red, colorScheme.onSurface.green, colorScheme.onSurface.blue, 0.38);
-              }
-              return textColor ?? colorScheme.primary;
-            }),
-            padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-              padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
+        button = Material(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(borderRadius),
+            child: Container(
+              padding: padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: buttonChild,
             ),
           ),
           child: buttonChild,
@@ -241,8 +231,8 @@ class OutlineButton extends CustomButton {
   }) : super(type: ButtonType.outline);
 }
 
-class TextButton extends CustomButton {
-  const TextButton({
+class CustomTextButton extends CustomButton {
+  const CustomTextButton({
     super.key,
     required super.text,
     super.onPressed,

@@ -201,12 +201,12 @@ class Helpers {
   }
 
   static String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2)}';
+    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 
   static Color getContrastColor(Color color) {
     // Calculate luminance
-    final luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+    final luminance = (0.299 * (color.r * 255.0).round() + 0.587 * (color.g * 255.0).round() + 0.114 * (color.b * 255.0).round()) / 255;
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
 

@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -282,15 +282,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: authProvider.isLoading
                     ? null
                     : () async {
-                        // Capture the context before the async gap
-                        final scaffoldContext = context;
+                        final navigator = Navigator.of(context);
+                        final messenger = ScaffoldMessenger.of(context);
                         if (emailController.text.isNotEmpty) {
                           final success = await authProvider.resetPassword(
                             emailController.text.trim(),
                           );
                           if (mounted) {
-                            Navigator.of(scaffoldContext).pop();
-                            ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                            navigator.pop();
+                            messenger.showSnackBar(
                               SnackBar(
                                 content: Text(
                                   success

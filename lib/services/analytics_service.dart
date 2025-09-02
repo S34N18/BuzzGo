@@ -66,7 +66,6 @@ class AnalyticsService {
     try {
       await _analytics.logSearch(
         searchTerm: query,
-        numberOfHits: resultsCount,
       );
     } catch (e) {
       debugPrint('Analytics error: $e');
