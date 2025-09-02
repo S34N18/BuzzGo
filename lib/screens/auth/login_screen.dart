@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../utils/app_routes.dart';
-import '../utils/validators.dart';
-import '../widgets/common/custom_button.dart';
-import '../widgets/common/loading_widget.dart';
-
+import '../../providers/auth_provider.dart';
+import '../../utils/app_routes.dart';
+import '../../utils/validators.dart';
+import '../../widgets/common/custom_button.dart' as custom;
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -144,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Login Button
                           Consumer<AuthProvider>(
                             builder: (context, authProvider, child) {
-                              return PrimaryButton(
+                              return custom.PrimaryButton(
                                 text: 'Sign In',
                                 width: double.infinity,
                                 isLoading: authProvider.isLoading,
@@ -158,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           // Google Sign In Button
                           Consumer<AuthProvider>(
                             builder: (context, authProvider, child) {
-                              return OutlineButton(
+                              return custom.OutlineButton(
                                 text: 'Continue with Google',
                                 width: double.infinity,
                                 icon: Icons.g_mobiledata,
@@ -284,13 +282,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: authProvider.isLoading
                     ? null
                     : () async {
+                        // Capture the context before the async gap
+                        final scaffoldContext = context;
                         if (emailController.text.isNotEmpty) {
                           final success = await authProvider.resetPassword(
                             emailController.text.trim(),
                           );
                           if (mounted) {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            Navigator.of(scaffoldContext).pop();
+                            ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                               SnackBar(
                                 content: Text(
                                   success

@@ -256,7 +256,7 @@ class Helpers {
 
   // Image utilities
   static bool isValidImageUrl(String url) {
-    final imageExtensions = AppConstants.supportedImageFormats;
+    const imageExtensions = AppConstants.supportedImageFormats;
     return imageExtensions.any((ext) => url.toLowerCase().endsWith('.$ext'));
   }
 

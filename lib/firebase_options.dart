@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'kupatanakenya.firebasestorage.app',
     measurementId: 'G-YT8NNX0ZVS',
   );
+
 }
