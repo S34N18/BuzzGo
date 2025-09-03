@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/event_provider.dart';
-import '../providers/auth_provider.dart';
-import '../models/event_model.dart';
-import '../utils/helpers.dart';
-import '../widgets/common/custom_button.dart';
-import '../widgets/map_widget.dart';
+import '../../providers/event_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../models/event_model.dart';
+import '../../utils/helpers.dart';
+import '../../widgets/common/custom_button.dart';
+import '../../widgets/map_widget.dart';
 
 class EventDetailScreen extends StatefulWidget {
   const EventDetailScreen({super.key});
@@ -77,7 +77,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withOpacity(0.7),
+                              Colors.black.withValues(alpha: 0.7),
                             ],
                           ),
                         ),
@@ -277,7 +277,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6750A4).withOpacity(0.1),
+                  color: const Color(0xFF6750A4).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

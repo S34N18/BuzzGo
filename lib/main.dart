@@ -34,7 +34,7 @@ class BuzzGoApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
             title: 'BuzzGo - Local Event Finder',
-            theme: themeProvider.currentTheme ?? ThemeData.light(),
+            theme: themeProvider.currentTheme,
             initialRoute: '/',
             routes: AppRoutes.routes,
             debugShowCheckedModeBanner: false,

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/event_provider.dart';
-import '../widgets/event_card.dart';
-import '../widgets/category_chip.dart';
-import '../widgets/common/loading_widget.dart';
-import '../widgets/common/error_widget.dart';
-import '../utils/app_routes.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/event_provider.dart';
+import '../../widgets/event_card.dart';
+import '../../widgets/category_chip.dart';
+import '../../widgets/common/loading_widget.dart';
+import '../../widgets/common/error_widget.dart';
+import '../../utils/app_routes.dart';
 
 class EventListScreen extends StatefulWidget {
   const EventListScreen({super.key});

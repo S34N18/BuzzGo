@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import '../providers/theme_provider.dart';
-import '../utils/validators.dart';
-import '../widgets/common/custom_button.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/theme_provider.dart';
+import '../../utils/validators.dart';
+import '../../widgets/common/custom_button.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -251,10 +251,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _handleSaveProfile(AuthProvider authProvider) async {
     if (_formKey.currentState!.validate()) {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
       final success = await authProvider.updateUserProfile(
         name: _nameController.text.trim(),
-        phoneNumber: _phoneController.text.trim().isEmpty 
-            ? null 
+        phoneNumber: _phoneController.text.trim().isEmpty
+            ? null
             : _phoneController.text.trim(),
       );
 
@@ -263,14 +264,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             _isEditing = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
+          scaffoldMessenger.showSnackBar(
             const SnackBar(
               content: Text('Profile updated successfully!'),
               backgroundColor: Colors.green,
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
+          scaffoldMessenger.showSnackBar(
             SnackBar(
               content: Text(authProvider.errorMessage ?? 'Failed to update profile'),
               backgroundColor: Colors.red,
@@ -365,10 +366,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop();
+              final navigator = Navigator.of(context);
+              navigator.pop();
               await authProvider.signOut();
               if (mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
+                navigator.pushNamedAndRemoveUntil(
                   '/login',
                   (route) => false,
                 );
@@ -396,16 +398,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop();
+              final navigator = Navigator.of(context);
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              navigator.pop();
               final success = await authProvider.deleteAccount();
               if (mounted) {
                 if (success) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
+                  navigator.pushNamedAndRemoveUntil(
                     '/login',
                     (route) => false,
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
                       content: Text(authProvider.errorMessage ?? 'Failed to delete account'),
                       backgroundColor: Colors.red,

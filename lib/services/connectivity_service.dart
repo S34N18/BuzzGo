@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 enum ConnectionStatus { online, offline, unknown }
 
@@ -49,11 +49,8 @@ class ConnectivityService {
       return;
     }
 
-    // Check if any connection is available
-    final hasConnection = results.any((result) => 
-        result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi ||
-        result == ConnectivityResult.ethernet);
+    // Check if any connection is available (any result except none)
+    final hasConnection = results.any((result) => result != ConnectivityResult.none);
 
     _updateConnectionStatus(
       hasConnection ? ConnectionStatus.online : ConnectionStatus.offline,

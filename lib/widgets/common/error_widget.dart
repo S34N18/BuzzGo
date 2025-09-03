@@ -55,7 +55,7 @@ class CustomErrorWidget extends StatelessWidget {
             Text(
               message ?? _getErrorMessage(),
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withOpacity(0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -91,7 +91,6 @@ class CustomErrorWidget extends StatelessWidget {
       case ErrorType.server:
         return Icons.error;
       case ErrorType.general:
-      default:
         return Icons.error_outline;
     }
   }
@@ -107,7 +106,6 @@ class CustomErrorWidget extends StatelessWidget {
       case ErrorType.server:
         return Colors.deepOrange;
       case ErrorType.general:
-      default:
         return colorScheme.error;
     }
   }
@@ -123,7 +121,6 @@ class CustomErrorWidget extends StatelessWidget {
       case ErrorType.server:
         return 'Server Error';
       case ErrorType.general:
-      default:
         return 'Something Went Wrong';
     }
   }
@@ -139,7 +136,6 @@ class CustomErrorWidget extends StatelessWidget {
       case ErrorType.server:
         return 'Our servers are experiencing issues. Please try again later.';
       case ErrorType.general:
-      default:
         return 'An unexpected error occurred. Please try again or contact support if the problem persists.';
     }
   }
@@ -238,12 +234,7 @@ class _ErrorBoundaryState extends State<ErrorBoundary> {
     return widget.child;
   }
 
-  void _handleError(Object error, StackTrace stackTrace) {
-    setState(() {
-      _error = error;
-      _stackTrace = stackTrace;
-    });
-  }
+  
 }
 
 // Snackbar error helper
@@ -316,7 +307,6 @@ class ErrorSnackBar {
       case ErrorType.server:
         return Icons.error;
       case ErrorType.general:
-      default:
         return Icons.error_outline;
     }
   }
@@ -332,7 +322,6 @@ class ErrorSnackBar {
       case ErrorType.server:
         return Colors.deepOrange;
       case ErrorType.general:
-      default:
         return colorScheme.error;
     }
   }

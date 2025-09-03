@@ -201,7 +201,7 @@ class Helpers {
   }
 
   static String colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 
   static Color getContrastColor(Color color) {

@@ -1,8 +1,28 @@
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
+
+// Simple logging utility using Flutter's built-in debugPrint
+class _AppLogger {
+  void info(String message) {
+    if (kDebugMode) {
+      debugPrint('[INFO] $message');
+    }
+  }
+  
+  void warning(String message) {
+    if (kDebugMode) {
+      debugPrint('[WARNING] $message');
+    }
+  }
+  
+  void error(String message) {
+    if (kDebugMode) {
+      debugPrint('[ERROR] $message');
+    }
+  }
+}
 
 // Logger instance for the app
-final Logger _logger = Logger();
+final _AppLogger _logger = _AppLogger();
 
 class AppConfig {
   // App Information
@@ -272,16 +292,16 @@ class AppConfig {
 
   static void printConfiguration() {
     if (enableLogging) {
-      _logger.i('=== App Configuration ===');
-      _logger.i('App Name: $appName');
-      _logger.i('Version: $appVersion');
-      _logger.i('Environment: $environment');
-      _logger.i('Base URL: $baseUrl');
-      _logger.i('Firebase Project: $firebaseProjectId');
-      _logger.i('Debug Mode: $isDebug');
-      _logger.i('Analytics Enabled: $enableAnalytics');
-      _logger.i('Logging Enabled: $enableLogging');
-      _logger.i('========================');
+      _logger.info('=== App Configuration ===');
+      _logger.info('App Name: $appName');
+      _logger.info('Version: $appVersion');
+      _logger.info('Environment: $environment');
+      _logger.info('Base URL: $baseUrl');
+      _logger.info('Firebase Project: $firebaseProjectId');
+      _logger.info('Debug Mode: $isDebug');
+      _logger.info('Analytics Enabled: $enableAnalytics');
+      _logger.info('Logging Enabled: $enableLogging');
+      _logger.info('========================');
     }
   }
 }

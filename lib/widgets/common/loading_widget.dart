@@ -66,7 +66,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
           Text(
             widget.message!,
             style: TextStyle(
-              color: colorScheme.onSurface.withOpacity(0.7),
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
             ),
             textAlign: TextAlign.center,
@@ -93,7 +93,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
           width: widget.size * 2,
           child: LinearProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(color),
-            backgroundColor: color.withOpacity(0.2),
+            backgroundColor: color.withValues(alpha: 0.2),
           ),
         );
 
@@ -149,7 +149,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: color.withOpacity(opacity),
+              color: color.withValues(alpha: opacity),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -229,7 +229,7 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
-            color: backgroundColor ?? Colors.black.withOpacity(0.5),
+            color: backgroundColor ?? Colors.black.withValues(alpha: 0.5),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(24),

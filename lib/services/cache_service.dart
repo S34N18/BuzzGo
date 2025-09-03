@@ -26,30 +26,61 @@ class CacheService {
 
   // Initialize cache service
   Future<void> initialize() async {
-    _prefs ??= await SharedPreferences.getInstance();
+    try {
+      _prefs ??= await SharedPreferences.getInstance();
+    } catch (e) {
+      throw Exception('Failed to initialize SharedPreferences: $e');
+    }
+  }
+
+  // Ensure SharedPreferences is initialized
+  Future<void> _ensureInitialized() async {
+    if (_prefs == null) {
+      await initialize();
+    }
   }
 
   // Generic cache methods
   Future<void> _setString(String key, String value) async {
-    await _prefs?.setString(key, value);
-    await _setLastUpdate(key);
+    await _ensureInitialized();
+    try {
+      await _prefs!.setString(key, value);
+      await _setLastUpdate(key);
+    } catch (e) {
+      throw Exception('Failed to cache data for key $key: $e');
+    }
   }
 
   String? _getString(String key) {
-    return _prefs?.getString(key);
+    if (_prefs == null) return null;
+    try {
+      return _prefs!.getString(key);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> _setLastUpdate(String key) async {
-    await _prefs?.setString(
-      '$_lastUpdateKey$key',
-      DateTime.now().toIso8601String(),
-    );
+    await _ensureInitialized();
+    try {
+      await _prefs!.setString(
+        '$_lastUpdateKey$key',
+        DateTime.now().toIso8601String(),
+      );
+    } catch (e) {
+      // Log error but don't throw to avoid breaking cache operations
+    }
   }
 
   DateTime? _getLastUpdate(String key) {
-    final updateString = _prefs?.getString('$_lastUpdateKey$key');
-    if (updateString != null) {
-      return DateTime.tryParse(updateString);
+    if (_prefs == null) return null;
+    try {
+      final updateString = _prefs!.getString('$_lastUpdateKey$key');
+      if (updateString != null) {
+        return DateTime.tryParse(updateString);
+      }
+    } catch (e) {
+      // Return null if parsing fails
     }
     return null;
   }
@@ -226,30 +257,35 @@ class CacheService {
 
   // Clear specific cache
   Future<void> clearEventsCache() async {
-    await _prefs?.remove(_eventsKey);
-    await _prefs?.remove('$_lastUpdateKey$_eventsKey');
+    await _ensureInitialized();
+    await _prefs!.remove(_eventsKey);
+    await _prefs!.remove('$_lastUpdateKey$_eventsKey');
   }
 
   Future<void> clearCategoriesCache() async {
-    await _prefs?.remove(_categoriesKey);
-    await _prefs?.remove('$_lastUpdateKey$_categoriesKey');
+    await _ensureInitialized();
+    await _prefs!.remove(_categoriesKey);
+    await _prefs!.remove('$_lastUpdateKey$_categoriesKey');
   }
 
   Future<void> clearUserDataCache() async {
-    await _prefs?.remove(_userDataKey);
-    await _prefs?.remove('$_lastUpdateKey$_userDataKey');
+    await _ensureInitialized();
+    await _prefs!.remove(_userDataKey);
+    await _prefs!.remove('$_lastUpdateKey$_userDataKey');
   }
 
   Future<void> clearNearbyEventsCache() async {
-    await _prefs?.remove(_nearbyEventsKey);
-    await _prefs?.remove('$_lastUpdateKey$_nearbyEventsKey');
+    await _ensureInitialized();
+    await _prefs!.remove(_nearbyEventsKey);
+    await _prefs!.remove('$_lastUpdateKey$_nearbyEventsKey');
   }
 
   Future<void> clearSearchCache() async {
-    final keys = _prefs?.getKeys().where((key) => key.startsWith('search_')) ?? [];
+    await _ensureInitialized();
+    final keys = _prefs!.getKeys().where((key) => key.startsWith('search_'));
     for (final key in keys) {
-      await _prefs?.remove(key);
-      await _prefs?.remove('$_lastUpdateKey$key');
+      await _prefs!.remove(key);
+      await _prefs!.remove('$_lastUpdateKey$key');
     }
   }
 
@@ -264,12 +300,13 @@ class CacheService {
 
   // Cache statistics
   Future<Map<String, dynamic>> getCacheStatistics() async {
-    final keys = _prefs?.getKeys() ?? <String>{};
+    await _ensureInitialized();
+    final keys = _prefs!.getKeys();
     final cacheKeys = keys.where((key) => !key.startsWith(_lastUpdateKey)).toList();
     
     int totalSize = 0;
     for (final key in cacheKeys) {
-      final value = _prefs?.getString(key) ?? '';
+      final value = _prefs!.getString(key) ?? '';
       totalSize += value.length;
     }
 
@@ -277,12 +314,13 @@ class CacheService {
       'totalItems': cacheKeys.length,
       'totalSizeBytes': totalSize,
       'totalSizeKB': (totalSize / 1024).toStringAsFixed(2),
-      'lastCleared': _prefs?.getString('last_cache_clear'),
+      'lastCleared': _prefs!.getString('last_cache_clear'),
     };
   }
 
   // Set cache clear timestamp
   Future<void> setCacheClearTimestamp() async {
-    await _prefs?.setString('last_cache_clear', DateTime.now().toIso8601String());
+    await _ensureInitialized();
+    await _prefs!.setString('last_cache_clear', DateTime.now().toIso8601String());
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/event_provider.dart';
-import '../providers/auth_provider.dart';
-import '../models/event_model.dart';
-import '../utils/validators.dart';
-import '../utils/helpers.dart';
-import '../widgets/common/custom_button.dart';
+import '../../providers/event_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../models/event_model.dart';
+import '../../utils/validators.dart';
+import '../../utils/helpers.dart';
+import '../../widgets/common/custom_button.dart';
+import '../../services/location_service.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -312,6 +313,38 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       return;
     }
 
+    // Get coordinates from location
+    double latitude = 0.0;
+    double longitude = 0.0;
+    final locationService = LocationService();
+    try {
+      final position = await locationService.getCoordinatesFromAddress(
+        _locationController.text.trim(),
+      );
+      if (position != null) {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not find coordinates for the location. Using default values.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error getting location coordinates: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+
     final event = EventModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: _titleController.text.trim(),
@@ -320,8 +353,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       startDate: _startDate!,
       endDate: _endDate!,
       location: _locationController.text.trim(),
-      latitude: 0.0, // TODO: Get from location service
-      longitude: 0.0, // TODO: Get from location service
+      latitude: latitude,
+      longitude: longitude,
       categoryId: _selectedCategoryId!,
       organizerId: authProvider.user!.uid,
       price: double.tryParse(_priceController.text) ?? 0.0,

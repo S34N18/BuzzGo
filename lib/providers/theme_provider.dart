@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
-  static const String _themeKey = 'theme_mode';
-  
   ThemeMode _themeMode = ThemeMode.system;
   bool _isLoading = false;
 
@@ -44,13 +42,13 @@ class ThemeProvider with ChangeNotifier {
         elevation: 0,
         scrolledUnderElevation: 1,
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
-      elevatedButtonTheme: ElevatedButtonTheme(
+      elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: const RoundedRectangleBorder(
@@ -58,7 +56,7 @@ class ThemeProvider with ChangeNotifier {
           ),
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonTheme(
+      outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: const RoundedRectangleBorder(
@@ -66,7 +64,7 @@ class ThemeProvider with ChangeNotifier {
           ),
         ),
       ),
-      textButtonTheme: TextButtonTheme(
+      textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: const RoundedRectangleBorder(
@@ -80,12 +78,12 @@ class ThemeProvider with ChangeNotifier {
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarTheme(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
-      chipTheme: ChipTheme(
-        shape: const RoundedRectangleBorder(
+      chipTheme: const ChipThemeData(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
       ),
@@ -106,13 +104,13 @@ class ThemeProvider with ChangeNotifier {
         elevation: 0,
         scrolledUnderElevation: 1,
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
-      elevatedButtonTheme: ElevatedButtonTheme(
+      elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: const RoundedRectangleBorder(
@@ -120,7 +118,7 @@ class ThemeProvider with ChangeNotifier {
           ),
         ),
       ),
-      outlinedButtonTheme: OutlinedButtonTheme(
+      outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: const RoundedRectangleBorder(
@@ -128,7 +126,7 @@ class ThemeProvider with ChangeNotifier {
           ),
         ),
       ),
-      textButtonTheme: TextButtonTheme(
+      textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: const RoundedRectangleBorder(
@@ -142,12 +140,12 @@ class ThemeProvider with ChangeNotifier {
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarTheme(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),
-      chipTheme: ChipTheme(
-        shape: const RoundedRectangleBorder(
+      chipTheme: const ChipThemeData(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
       ),
@@ -161,8 +159,8 @@ class ThemeProvider with ChangeNotifier {
       notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
-      final themeModeString = prefs.getString(_themeKey);
-      
+      final themeModeString = prefs.getString('theme_mode');
+
       if (themeModeString != null) {
         _themeMode = ThemeMode.values.firstWhere(
           (mode) => mode.toString() == themeModeString,
@@ -171,6 +169,8 @@ class ThemeProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error loading theme mode: $e');
+      // Fallback to system theme if loading fails
+      _themeMode = ThemeMode.system;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -181,9 +181,10 @@ class ThemeProvider with ChangeNotifier {
   Future<void> _saveThemeMode() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_themeKey, _themeMode.toString());
+      await prefs.setString('theme_mode', _themeMode.toString());
     } catch (e) {
       debugPrint('Error saving theme mode: $e');
+      // Continue silently if saving fails - not critical for app functionality
     }
   }
 
