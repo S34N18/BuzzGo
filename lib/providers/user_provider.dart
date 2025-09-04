@@ -24,9 +24,8 @@ class UserProvider with ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      // This would require a custom Firestore query or Cloud Function
-      // For now, we'll leave it as a placeholder
-      _users = [];
+      // Load all users from Firestore (admin only)
+      _users = await _firestoreService.getAllUsers();
     } catch (e) {
       _setError('Failed to load users: ${e.toString()}');
     } finally {

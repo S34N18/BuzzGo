@@ -219,7 +219,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (success && mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        // Smart redirect based on admin status
+        if (authProvider.isAdmin) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.adminDashboard);
+        } else {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+        }
       } else if (mounted && authProvider.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

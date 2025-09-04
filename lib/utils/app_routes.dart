@@ -11,6 +11,8 @@ import '../screens/events/my_events_screen.dart';
 import '../screens/admin/admin_dashboard_screen.dart';
 import '../screens/admin/manage_events_screen.dart';
 import '../screens/admin/analytics_screen.dart';
+import '../screens/admin/admin_events_screen.dart';
+import '../screens/admin/admin_users_screen.dart';
 import '../screens/payment/payment_screen.dart';
 import '../screens/payment/payment_history_screen.dart';
 
@@ -28,6 +30,8 @@ class AppRoutes {
   static const String adminDashboard = '/admin-dashboard';
   static const String manageEvents = '/manage-events';
   static const String analytics = '/analytics';
+  static const String adminEvents = '/admin-events';
+  static const String adminUsers = '/admin-users';
   static const String payment = '/payment';
   static const String paymentHistory = '/payment-history';
 
@@ -46,6 +50,8 @@ class AppRoutes {
       adminDashboard: (context) => const AdminDashboardScreen(),
       manageEvents: (context) => const ManageEventsScreen(),
       analytics: (context) => const AnalyticsScreen(),
+      adminEvents: (context) => const AdminEventsScreen(),
+      adminUsers: (context) => const AdminUsersScreen(),
       payment: (context) => const PaymentScreen(),
       paymentHistory: (context) => const PaymentHistoryScreen(),
     };

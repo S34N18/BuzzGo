@@ -50,6 +50,18 @@ class FirestoreService {
     }
   }
 
+  // Get all users (admin function)
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      QuerySnapshot snapshot = await _db.collection(usersCollection).get();
+      return snapshot.docs
+          .map((doc) => UserModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to get all users: ${e.toString()}');
+    }
+  }
+
   // Event operations
   Future<void> createEvent(EventModel event) async {
     try {
