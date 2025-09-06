@@ -14,6 +14,11 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadUsers();
   }
 
@@ -126,10 +131,10 @@ class _AdminUsersScreenState extends State<AdminUsersScreen> {
                 isAdmin: true,
                 updatedAt: DateTime.now(),
               );
-              
+
               await userProvider.updateUser(updatedUser);
-              
-              if (mounted) {
+
+              if (context.mounted) {
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
