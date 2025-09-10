@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'firestore_service.dart';
 import '../models/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirestoreService _firestoreService = FirestoreService();
   final Logger _logger = Logger();
 
@@ -99,9 +101,98 @@ class AuthService {
     }
   }
 
-  // Sign in with Google (stub method - not implemented)
+  // Sign in with Google
   Future<UserCredential?> signInWithGoogle() async {
-    throw UnimplementedError('Google Sign-In is not implemented');
+    try {
+      _logger.i('Starting Google Sign-In process');
+      
+      // Begin interactive sign-in process
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      
+      if (googleUser == null) {
+        // User cancelled the sign-in process
+        _logger.w('Google Sign-In cancelled by user');
+        return null;
+      }
+      
+      _logger.i('Google Sign-In account obtained: ${googleUser.email}');
+      
+      // Obtain auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        throw Exception('Missing Google Sign-In tokens');
+      }
+      
+      // Create a new credential for Firebase Auth
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      
+      _logger.i('Authenticating with Firebase using Google credentials');
+      
+      // Sign in to Firebase with the Google credentials
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      
+      if (userCredential.user != null) {
+        _logger.i('Google Sign-In successful for user: ${userCredential.user!.uid}');
+        
+        // Check if this is a new user or existing user
+        final bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+        
+        if (isNewUser) {
+          _logger.i('New user detected, creating user profile');
+          
+          // Create user profile in Firestore for new users
+          final userModel = UserModel(
+            id: userCredential.user!.uid,
+            email: userCredential.user!.email ?? '',
+            name: userCredential.user!.displayName ?? 'Google User',
+            phoneNumber: userCredential.user!.phoneNumber,
+            profileImage: userCredential.user!.photoURL,
+            favoriteEvents: [],
+            attendedEvents: [],
+            isAdmin: false, // New Google users are not admin by default
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          
+          await _firestoreService.createUser(userModel);
+          _logger.i('User profile created for new Google user: ${userCredential.user!.uid}');
+        } else {
+          _logger.i('Existing user signed in with Google');
+          
+          // Ensure user profile exists (for users who signed up before Google Sign-In was implemented)
+          await ensureUserProfileExists();
+        }
+        
+        return userCredential;
+      }
+      
+      _logger.e('Google Sign-In failed: no user in credential');
+      return null;
+      
+    } on FirebaseAuthException catch (e) {
+      _logger.e('Firebase Auth error during Google Sign-In: ${e.code} - ${e.message}');
+      
+      // Handle specific Firebase Auth errors
+      switch (e.code) {
+        case 'account-exists-with-different-credential':
+          throw Exception('An account already exists with a different sign-in method for this email.');
+        case 'invalid-credential':
+          throw Exception('The credential is invalid or has expired.');
+        case 'operation-not-allowed':
+          throw Exception('Google Sign-In is not enabled for this project.');
+        case 'user-disabled':
+          throw Exception('This user account has been disabled.');
+        default:
+          throw Exception('Google Sign-In failed: ${e.message}');
+      }
+    } catch (e) {
+      _logger.e('Unexpected error during Google Sign-In: $e');
+      throw Exception('Google Sign-In failed: $e');
+    }
   }
 
   // Reset password (alias for sendPasswordResetEmail)
@@ -125,7 +216,19 @@ class AuthService {
   // Sign out
   Future<void> signOut() async {
     try {
+      _logger.i('Starting sign out process');
+      
+      // Sign out from Google if user signed in with Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signInSilently();
+      if (googleUser != null) {
+        await _googleSignIn.signOut();
+        _logger.i('Google Sign-Out completed');
+      }
+      
+      // Sign out from Firebase Auth
       await _auth.signOut();
+      _logger.i('Firebase Auth sign out completed');
+      
     } catch (e) {
       _logger.e('Sign out error: $e');
       rethrow;

@@ -201,6 +201,20 @@ class EventProvider with ChangeNotifier {
       // Add to my events list
       _myEvents.insert(0, event);
       
+      // Also add to main events list so it's visible to all users
+      _events.insert(0, event);
+      
+      // Add to nearby events if location matches
+      if (_userLatitude != null && _userLongitude != null) {
+        double distance = _calculateDistance(
+          _userLatitude!, _userLongitude!, 
+          event.latitude, event.longitude
+        );
+        if (distance <= 10.0) { // Within 10km
+          _nearbyEvents.insert(0, event);
+        }
+      }
+      
       return true;
     } catch (e) {
       _setError('Failed to create event: ${e.toString()}');
@@ -208,6 +222,14 @@ class EventProvider with ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  // Helper method to calculate distance
+  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    // Simplified distance calculation
+    double deltaLat = lat2 - lat1;
+    double deltaLon = lon2 - lon1;
+    return (deltaLat * deltaLat + deltaLon * deltaLon) * 111; // Rough km conversion
   }
 
   // Update event

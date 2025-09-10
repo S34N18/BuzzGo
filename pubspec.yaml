@@ -56,6 +56,9 @@ dependencies:
   
   # External APIs
   dio: ^5.4.3
+  
+  # Google Sign-In
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

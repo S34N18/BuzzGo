@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logger/logger.dart';
 import '../models/user_model.dart';
 import '../models/event_model.dart';
 import '../models/category_model.dart';
@@ -6,6 +7,7 @@ import '../models/payment_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static final Logger _logger = Logger();
 
   // Collections
   static const String usersCollection = 'users';
@@ -99,12 +101,39 @@ class FirestoreService {
         query = query.where('organizerId', isEqualTo: organizerId);
       }
       
-      query = query.orderBy('startDate').limit(limit);
-      
-      QuerySnapshot snapshot = await query.get();
-      return snapshot.docs
-          .map((doc) => EventModel.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      // Try with orderBy first
+      try {
+        query = query.orderBy('startDate').limit(limit);
+        QuerySnapshot snapshot = await query.get();
+        return snapshot.docs
+            .map((doc) => EventModel.fromJson(doc.data() as Map<String, dynamic>))
+            .toList();
+      } catch (indexError) {
+        // If index doesn't exist, fallback to query without orderBy
+        _logger.w('Index not found, using fallback query: $indexError');
+        
+        query = _db.collection(eventsCollection).where('isActive', isEqualTo: true);
+        
+        if (categoryId != null) {
+          query = query.where('categoryId', isEqualTo: categoryId);
+        }
+        
+        if (organizerId != null) {
+          query = query.where('organizerId', isEqualTo: organizerId);
+        }
+        
+        query = query.limit(limit);
+        
+        QuerySnapshot snapshot = await query.get();
+        List<EventModel> events = snapshot.docs
+            .map((doc) => EventModel.fromJson(doc.data() as Map<String, dynamic>))
+            .toList();
+        
+        // Sort manually by startDate
+        events.sort((a, b) => a.startDate.compareTo(b.startDate));
+        
+        return events;
+      }
     } catch (e) {
       throw Exception('Failed to get events: ${e.toString()}');
     }
